@@ -3,33 +3,50 @@
 Section 1 - In The Apartment
 
 The maximum score is 10.
-Victory is a truth state that varies.  Victory is false.
+eradicated_ants is a truth state that varies.  eradicated_ants is false.
+cat_vomited is a truth state that varies.  cat_vomited is false.
 
 [ living room ]
-The living room is a room. "A fairly ordinary room in a fairly ordinary apartment.  Most of the furniture is from IKEA.  The door to the outside is to the south, the kitchen is to the east, and the rest of the apartment is to the north.  A bookshelf fills one corner of the room."
+The living room is a room. "A fairly ordinary room in a fairly ordinary apartment.  It's sparsely decorated, and most of the furniture is from IKEA.  The door to the outside is to the south, the kitchen is to the east, and the rest of the apartment is to the north.  A tall bookshelf fills one corner of the room, and there is a wide, low shelf under the window to the south."
 
 The couch is in the living room.  The couch is a supporter.  The description is "It's from IKEA.  It's a bit worn but looks comfy."
+The couch is enterable.
 
 The bookshelves are in the living room.  The bookshelves are scenery.  The description is "The shelves are packed full of books, but you don't have time to read right now."
-Understand "shelves" and "books" as the bookshelves.
-	
-The apartment door is a closed door.  The apartment door is south of the living room.  The apartment door is locked.
+Understand "shelves" and "books" and "tall shelf" as the bookshelves.
+
+The TV stand is in the living room.  The Xbox is a device on the TV stand.
+
+The laptop is a device on the couch.  The description is "An 11-inch Macbook Air.  The case is decorated with stickers for WordCamps, Ruby conferences and the Ada Initiative."
+
+Instead of switching on the laptop:
+	Say "It seems its battery is dead."
+
+After switching on the Xbox:
+	Choose a random row in the Table of Video Games.;
+	Say "You start playing [game name entry].  Several hours pass.  You realize you have more important things to do.";
+	Increase number_ants by a random number between 1000 and 10000.;
+	Try switching off the Xbox.
+
+The wide shelf is in the living room.  The wide shelf is scenery.  The description is "A low shelf under the window.  The open cubbies contain several pairs of shoes and a variety of miscellaneous clutter."
+
+The apartment door is a closed door.  The apartment door is south of the living room.  The apartment door is locked.   The apartment door is scenery.
 Instead of opening the apartment door:
 	say "The prospect of leaving the house seems fraught with complexity and hidden dangers."
 
 [cat]
 A cat is a kind of animal.
 
-The cardboard box is in the living room.  The cardboard box is a container.  The cardboard box contains a one-eyed cat. The cat has the indefinite article "a".
+The cardboard box is on the wide shelf.  The cardboard box is a container.  The cardboard box contains a one-eyed cat. The cat has the indefinite article "a".
 
 The one-eyed cat is a cat.  The description is "A well-fed orange tomcat.  Despite his missing eye, he's actually pretty cute.  He's wearing a red collar.[if the one-eyed cat is unfriendly]  He regards you warily."
-The one-eyed cat is wearing a red collar.  The description of the red collar is "It says his name is 'Naranjito'."
+The one-eyed cat is wearing a red collar.  The description of the red collar is "The tag on the collar reads 'Naranjito'."
 
 Understand "orange cat" as the one-eyed cat.
 Understand "Naranjito" or "Naran" as the one-eyed cat when the one-eyed cat is proper-named.
 
 The small cat is on the couch.  The small cat is a female cat.  The small cat has the description "A smallish black and brown tabby.  She's wearing a black collar.[if the small cat is unfriendly]  She regards you warily."
-The small cat is wearing a black collar.  The description of the black collar is "It says her name is 'Pandora'."
+The small cat is wearing a black collar.  The description of the black collar is "The tag on the collar reads 'Pandora'."
 
 Understand "Pandora" or "Dora" as the small cat when the small cat is proper-named.
 
@@ -122,6 +139,21 @@ Every turn:
 			let next space be a random room which is adjacent to the current space;
 			let the way be the best route from the location of the small cat to the next space;
 			try the small cat going the way
+			
+Some cat vomit is an edible thing.  The description of the cat vomit is "a small pool of cat vomit".
+
+[ we made it edible for the ants, but don't want the player eating it.]
+Instead of eating the cat vomit:
+	say "Ew, no."
+	
+Every turn:
+	If the small cat is in a room (called the current space) and eradicated_ants is true and cat_vomited is false:
+		If the location of the small cat is the location of the player:
+			Say "Suddenly, [the small cat] vomits on the floor.";
+		Otherwise:
+			say "You hear the sound of a cat vomiting in the [current space].";
+		Now the cat vomit is in the current space.;
+		Now cat_vomited is true.
 
 [ ants ]
 number_ants is a number that varies.  number_ants is 100.
@@ -164,13 +196,15 @@ Every turn:
 [ check for victory -- if we still have no ants after the above has run ]
 Every turn:
 	if number_ants is 0 and all edible things that are on-stage are in the compost bin:
-		if victory is false:
-			now victory is true;
-			Increase score by 5;  [ no more ants ever ]
-			say "You feel smug."
+		if eradicated_ants is false:
+			now eradicated_ants is true;
+			Increase score by 4;  [ no more ants ever ]
+			say "You feel smug.";
+			try the small cat getting off the couch [ ominous! ]
 			
 Every turn:
 	If score is 10 and number_ants is 0, end the story
+	
 
 Instead of attacking some ants:
 	say "You kill all the ants.";
@@ -184,6 +218,12 @@ Instead of taking some ants:
 
 [ kitchen ]
 The kitchen is a room.  "It contains all the usual kitcheny things."  The kitchen is east of the living room.
+
+There is a counter in the kitchen.  The counter is scenery.
+
+There is a tea kettle on the counter.  The tea kettle is a device.
+The basket is a container.  The basket is part of the tea kettle.
+
 
 There is a roll of paper towels in the kitchen.
 
@@ -207,7 +247,7 @@ Before inserting into the closed compost bin:
 	silently try opening the compost bin
 
 [hallway]
-The hallway is a room.  The hallway is north of the living room.
+The hallway is a room.  The hallway is north of the living room.  "The hallway connects the living room to the rest of the apartment.  To the west is the master bedroom.  The study is to the east, and the bathroom is to the north."
 
 There is some cat food in the hallway.  The cat food is edible.  The description of the cat food is "There are globs of cat food on the floor.  It looks like the cats are messy eaters."  The indefinite article of cat food is "some".
 
@@ -234,7 +274,13 @@ Check taking it with:
 		Remove the paper towel from play;
 		Remove the cat food from play;
 		Now the player has the wrapped cat food.;
-		increase score by 1
+		increase score by 1;
+	else if the noun is the cat vomit and the second noun is the paper towel:
+		say "You use the paper towel to clean up the cat vomit.";
+		Remove the paper towel from play;
+		Remove the cat vomit from play;
+		Now the player has the dirty paper towel.;
+		increase score by 1;
 
 Before taking an edible thing:
 	if the location of the ants is the location of the player:
@@ -248,12 +294,20 @@ Instead of taking the cat food:
 	Else:
 		Say "(with the paper towel)[command clarification break]";
 		try taking the cat food with the paper towel
+
+Instead of taking the cat vomit:
+	If the player does not have the paper towel:
+		Say "You don't want to pick it up with your bare hands.";
+		Stop the action.;
+	Else:
+		Say "(with the paper towel)[command clarification break]";
+		try taking the cat vomit with the paper towel
 				
 [study]
 The study is a room.  The study is east of the hallway.  "A cramped room that seems to double as a guest room and an office space."
 
 [bathroom]
-The bathroom is a room.  "It's small but clean and new-looking."  The bathroom is north of the hallway.
+The bathroom is a room.  "It's small but relatively clean and new-looking."  The bathroom is north of the hallway.
 [The bathroom door is an open door.  The bathroom door is south of the bathroom and north of the hallway.] [ using a door here breaks the ability of the ants to move to it :/ ]
 
 There is an overripe banana in the bathroom.  The overripe banana is edible.  The overripe banana has the description "You don't know what this is doing here, but it stinks."
@@ -270,9 +324,10 @@ Instead of eating the dirty paper towel:
 
 
 [bedroom]
-The bedroom is a room.  The bedroom is west of the hallway.  "Most of the space is taken up by a large bed."
+The bedroom is a room.  The bedroom is west of the hallway.  "The master bedroom.  Most of the space is taken up by a large bed.  There's a wide dresser underneath the window."
 
-The bed is in the bedroom.  The bed is a supporter.  The description is "It's from IKEA.  It looks comfy."
+The bed is in the bedroom.  The bed is a supporter.  The bed is enterable.  The description is "It's from IKEA.  It looks comfy."
+The dresser is in the bedroom.  The dresser is scenery.
 
 [player]
 The description of the player is "You look tired.  You're wearing your favorite pajamas."
@@ -283,6 +338,33 @@ Instead of taking off the pajamas:
 	say "You don't want to take them off.   They're comfortable."
 
 
+[windows]
+A window is a kind of thing.  A window is usually scenery.
+The living room window is a window in the living room.
+The kitchen window is a window in the kitchen.
+The study window is a window in the study.
+The bathroom window is a window in the bathroom.
+The bedroom window is a window in the bedroom.
+Instead of examining a window:
+	Say "It's sunny outside."
+
+
+
+Table of Video Games
+game name
+"Batman: Arkham Asylum"
+"Assassin's Creed 2: Brotherhood"
+"Assassin's Creed 2: Revelations"
+"Pokémon"
+"Ni No Kuni"
+"XCom"
+"Spyro: Year of the Dragon"
+"Final Fantasy VII"
+"Chrono Trigger"
+
+
+
+[ show a link to Github after game is won ]
 This is the print source rule:
 	Say "The source for this game is on Github:[line break]https://www.github.com/codebykat/a-complicated-chain[paragraph break]"
 
