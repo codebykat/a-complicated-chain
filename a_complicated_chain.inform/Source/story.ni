@@ -14,6 +14,7 @@ The couch is enterable.
 
 The bookshelves are in the living room.  The bookshelves are scenery.  The description is "The shelves are packed full of books, but you don't have time to read right now."
 Understand "shelves" and "books" and "tall shelf" as the bookshelves.
+[Probably also want "book" (singular) to handle "book shelves" but don't put "tall shelf" in one set of quotes; if you do all the words separately, Inform makes guesses about what the player means based on matched words, but won't match on just "tall" or "shelf" if they aren't both there. So "tall bookshelves" would fail to match, as would "book shelf."]
 
 The TV stand is in the living room.  The Xbox is a device on the TV stand.
 
@@ -21,14 +22,18 @@ The laptop is a device on the couch.  The description is "An 11-inch Macbook Air
 
 Instead of switching on the laptop:
 	Say "It seems its battery is dead."
+[If you want to implement a working computer, Em Short has an extension for computers!  Otherwise, you might also want to handle "opening" the computer.]
 
 After switching on the Xbox:
 	Choose a random row in the Table of Video Games.;
 	Say "You start playing [game name entry].  Several hours pass.  You realize you have more important things to do.";
 	Increase number_ants by a random number between 1000 and 10000.;
 	Try switching off the Xbox.
+[For extra fun, maybe try actually increasing the turn count accordingly?  Though that could introduce bugs if you've got other stuff depending on it.]
 
 The wide shelf is in the living room.  The wide shelf is scenery.  The description is "A low shelf under the window.  The open cubbies contain several pairs of shoes and a variety of miscellaneous clutter."
+
+[oh gosh from a design perspective, I try to never mention vague clutter -- people are gonna want to dig.  Give them some shoes/clutter dummy objects, at least. (For a game I did in an attic, I had a clutter object that redirected to a list of random objects from a table.)]
 
 The apartment door is a closed door.  The apartment door is south of the living room.  The apartment door is locked.   The apartment door is scenery.
 Instead of opening the apartment door:
@@ -42,7 +47,7 @@ The cardboard box is on the wide shelf.  The cardboard box is a container.  The 
 The one-eyed cat is a cat.  The description is "A well-fed orange tomcat.  Despite his missing eye, he's actually pretty cute.  He's wearing a red collar.[if the one-eyed cat is unfriendly]  He regards you warily."
 The one-eyed cat is wearing a red collar.  The description of the red collar is "The tag on the collar reads 'Naranjito'."
 
-Understand "orange cat" as the one-eyed cat.
+Understand "orange cat" as the one-eyed cat. [See above about understand tokens; you probably just want "orange" instead.]
 Understand "Naranjito" or "Naran" as the one-eyed cat when the one-eyed cat is proper-named.
 
 The small cat is on the couch.  The small cat is a female cat.  The small cat has the description "A smallish black and brown tabby.  She's wearing a black collar.[if the small cat is unfriendly]  She regards you warily."
@@ -124,6 +129,7 @@ Every turn:
 				let the way be the best route from the location of the one-eyed cat to the next space;
 				try the one-eyed cat going the way
 
+[Re: walking through doors, there is a way to ask for the route taking doors into account.  If you do this, you need to account for "way" being "nothing."  There should also be a way to check the visibility of the cat from within the "report" rules for the action, so the cat will still do the things when you're not in the room, but you only hear about it when that makes sense.]
 
 [ pandora moving ]
 Every turn:
@@ -139,7 +145,9 @@ Every turn:
 			let next space be a random room which is adjacent to the current space;
 			let the way be the best route from the location of the small cat to the next space;
 			try the small cat going the way
-			
+
+[If it were me, I'd probably generalize both cats' movements into an activity on cats.  You know, to allow for future cats.]
+
 Some cat vomit is an edible thing.  The description of the cat vomit is "a small pool of cat vomit".
 
 [ we made it edible for the ants, but don't want the player eating it.]
@@ -205,6 +213,7 @@ Every turn:
 Every turn:
 	If score is 10 and number_ants is 0, end the story
 	
+[What, no victory text?]
 
 Instead of attacking some ants:
 	say "You kill all the ants.";
@@ -219,6 +228,8 @@ Instead of taking some ants:
 [ kitchen ]
 The kitchen is a room.  "It contains all the usual kitcheny things."  The kitchen is east of the living room.
 
+[Another extension that is great, for making sure kitchens actually contain kitcheny things: "Modern Conveniences" by Em Short.]
+
 There is a counter in the kitchen.  The counter is scenery.
 
 There is a tea kettle on the counter.  The tea kettle is a device.
@@ -231,6 +242,7 @@ Understand "towel" as the paper towel.
 Understand "towel" as the roll of paper towels when the paper towel is not visible.
 Understand "paper towel" as the roll of paper towels when the paper towel is not visible.
 There is a paper towel.
+[Hm, is it okay for it to get declared down here after the understand rule for it?]
 There is a dirty paper towel.  The dirty paper towel is edible.
 
 Instead of taking the roll of paper towels:
@@ -245,6 +257,8 @@ There is a compost bin in the kitchen.  It is a container.  It is openable.  The
 Before inserting into the closed compost bin:
 	say "(first opening the compost bin)[command clarification break]";
 	silently try opening the compost bin
+
+[did this work? I would have thought it needs to be "inserting something into"]
 
 [hallway]
 The hallway is a room.  The hallway is north of the living room.  "The hallway connects the living room to the rest of the apartment.  To the west is the master bedroom.  The study is to the east, and the bathroom is to the north."
@@ -317,6 +331,7 @@ After eating the overripe banana:
 	say "The banana is very squishy and has dark spots, but you manage to get it down.  You feel slightly ill.  You are left with the peel.";
 	Now the player has a banana peel.
 [ we made it edible for the ants, but don't want the player eating it.]
+[I wonder if it wouldn't make more sense to have a separate "ant-attracting" property? You could have all edible things be ant-attracting, but not necessarily vice versa. Or even have a "disgusting" property, and write a "Definition: a thing is ant-attracting if it is edible or if it is disgusting." Though honestly you'd probably want to write custom not-eating-this text anyway, so whatever.]
 Instead of eating the banana peel:
 	say "That's plainly inedible."
 Instead of eating the dirty paper towel:
@@ -333,6 +348,8 @@ The dresser is in the bedroom.  The dresser is scenery.
 The description of the player is "You look tired.  You're wearing your favorite pajamas."
 The player is wearing dinosaur pajamas.
 Dinosaur pajamas are a thing.  The description is "It's an adult Kigurumi onesie that looks like a green dinosaur.  It even has a tail."
+
+[Ha I can't help but read "Dinosaur pajamas are a thing" in a slightly combative, "whatever you don't even know me" tone.]
 
 Instead of taking off the pajamas:
 	say "You don't want to take them off.   They're comfortable."
